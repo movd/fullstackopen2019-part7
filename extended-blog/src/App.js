@@ -213,6 +213,8 @@ const App = props => {
 };
 
 const mapStateToProps = state => {
+  // log state for debugging
+  console.log(state);
   return {
     notification: state.notification
   };
