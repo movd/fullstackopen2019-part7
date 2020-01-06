@@ -4,14 +4,16 @@ import blogsService from "./services/blogs";
 import LoginForm from "./components/LoginForm";
 import Blog from "./components/Blog";
 import NewBlogForm from "./components/NewBlogForm";
+// TODO REDUX
+import { connect } from "react-redux";
 import Notification from "./components/Notification";
 import { useField } from "./hooks";
+import { setNotification } from "./reducers/notificationReducer";
 
-const App = () => {
+const App = props => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [blogs, setBlogs] = useState([]);
-  const [notification, setNotification] = useState();
   const [visibilityNewBlogForm, setVisibilityNewBlogForm] = useState(false);
   // Custom Hooks:
   const [username, resetUsername] = useField("text");
@@ -19,12 +21,6 @@ const App = () => {
   const [title, resetTitle] = useField("text");
   const [author, resetAuthor] = useField("text");
   const [url, resetUrl] = useField("text");
-
-  const clearNotification = () => {
-    setTimeout(() => {
-      setNotification(null);
-    }, 5000);
-  };
 
   const handleLogin = async event => {
     event.preventDefault();
@@ -39,11 +35,11 @@ const App = () => {
       resetUsername();
       resetPassword();
     } catch (exception) {
-      setNotification({
+      props.setNotification({
         type: "error",
-        message: "wrong username or password"
+        message: "wrong username or password",
+        timeoutSeconds: 5
       });
-      clearNotification();
     }
   };
 
@@ -68,28 +64,28 @@ const App = () => {
       );
       // Add 'user' object so that Blog compoent gets user directly after its added to state
       setBlogs(blogs.concat({ ...addedBlog, user: [user] }));
-      setNotification({
+      props.setNotification({
         type: "success",
-        message: `A new Blog ${addedBlog.title} by ${addedBlog.author} added`
+        message: `A new Blog ${addedBlog.title} by ${addedBlog.author} added`,
+        timeoutSeconds: 5
       });
       resetAuthor();
       resetTitle();
       resetUrl();
-      clearNotification();
     } catch (error) {
       if (error.response.data.error) {
-        setNotification({
+        props.setNotification({
           type: "error",
-          message: error.response.data.error
+          message: error.response.data.error,
+          timeoutSeconds: 5
         });
       } else {
-        setNotification({
+        props.setNotification({
           type: "error",
-          message: error.message
+          message: error.message,
+          timeoutSeconds: 5
         });
       }
-
-      clearNotification();
     }
   };
 
@@ -101,17 +97,16 @@ const App = () => {
     try {
       await blogsService.remove(blog);
       setBlogs(newBlogs);
-      setNotification({
+      props.setNotification({
         type: "success",
-        message: `The Blog ${blog.title} by ${blog.author} has been deleted`
+        message: `The Blog ${blog.title} by ${blog.author} has been deleted`,
+        timeoutSeconds: 5
       });
-      clearNotification();
     } catch (error) {
-      setNotification({
+      props.setNotification({
         type: "error",
         message: error.message
       });
-      clearNotification();
     }
   };
 
@@ -173,7 +168,7 @@ const App = () => {
 
   return (
     <div className="App">
-      {notification ? <Notification notification={notification} /> : null}
+      <Notification />
       {user === null ? (
         <LoginForm
           handleLogin={handleLogin}
@@ -217,4 +212,10 @@ const App = () => {
   );
 };
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    notification: state.notification
+  };
+};
+
+export default connect(mapStateToProps, { setNotification })(App);
