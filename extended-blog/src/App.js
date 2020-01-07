@@ -9,11 +9,23 @@ import { connect } from "react-redux";
 import Notification from "./components/Notification";
 import { useField } from "./hooks";
 import { setNotification } from "./reducers/notificationReducer";
+import {
+  initializeBlogs,
+  like,
+  createBlog,
+  removeBlog
+} from "./reducers/blogReducer";
 
 const App = props => {
+  // Store blogs to Redux Store
+  const initBlogs = props.initializeBlogs;
+  useEffect(() => {
+    initBlogs();
+    setIsLoading(false);
+  }, [initBlogs]);
+
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [blogs, setBlogs] = useState([]);
   const [visibilityNewBlogForm, setVisibilityNewBlogForm] = useState(false);
   // Custom Hooks:
   const [username, resetUsername] = useField("text");
@@ -53,71 +65,40 @@ const App = props => {
 
   const handleNewBlog = async event => {
     event.preventDefault();
-    try {
-      const addedBlog = await blogsService.create(
-        {
-          title: title.value,
-          author: author.value,
-          url: url.value
-        },
-        user.token
-      );
-      // Add 'user' object so that Blog compoent gets user directly after its added to state
-      setBlogs(blogs.concat({ ...addedBlog, user: [user] }));
-      props.setNotification({
-        type: "success",
-        message: `A new Blog ${addedBlog.title} by ${addedBlog.author} added`,
-        timeoutSeconds: 5
-      });
-      resetAuthor();
-      resetTitle();
-      resetUrl();
-    } catch (error) {
-      if (error.response.data.error) {
-        props.setNotification({
-          type: "error",
-          message: error.response.data.error,
-          timeoutSeconds: 5
-        });
-      } else {
-        props.setNotification({
-          type: "error",
-          message: error.message,
-          timeoutSeconds: 5
-        });
-      }
-    }
+    const newBlog = {
+      title: title.value,
+      author: author.value,
+      url: url.value
+    };
+
+    props.createBlog(
+      {
+        title: title.value,
+        author: author.value,
+        url: url.value
+      },
+      user.token
+    );
+
+    props.setNotification({
+      type: "success",
+      message: `A new Blog ${newBlog.title} by ${newBlog.author} added`,
+      timeoutSeconds: 5
+    });
+    resetAuthor();
+    resetTitle();
+    resetUrl();
   };
 
   const handleDeleteBlog = async blog => {
+    props.removeBlog(blog);
     window.confirm(`remove blog '${blog.title} by ${blog.author}`);
-    const idx = blogs.findIndex(b => b.id === blog.id);
-    let newBlogs = [...blogs];
-    newBlogs.splice(idx, 1);
-    try {
-      await blogsService.remove(blog);
-      setBlogs(newBlogs);
-      props.setNotification({
-        type: "success",
-        message: `The Blog ${blog.title} by ${blog.author} has been deleted`,
-        timeoutSeconds: 5
-      });
-    } catch (error) {
-      props.setNotification({
-        type: "error",
-        message: error.message
-      });
-    }
+    props.setNotification({
+      type: "success",
+      message: `The Blog ${blog.title} by ${blog.author} has been deleted`,
+      timeoutSeconds: 5
+    });
   };
-
-  // Only GET blogs when compontents mounts or 'user' state
-  useEffect(() => {
-    if (user) {
-      setIsLoading(true);
-      getBlogs();
-      setIsLoading(false);
-    }
-  }, [user]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -128,33 +109,18 @@ const App = props => {
     }
   }, []);
 
-  const getBlogs = async () => {
-    const unsortedBlogs = await blogsService.getAll();
-    const sortedBlogs = unsortedBlogs.sort((a, b) => b.likes - a.likes);
-    //
-    setBlogs(sortedBlogs);
-  };
-
   const handLikeChange = async blog => {
     // Find Element Index in blogs array (state) by given id
-    const idx = blogs.findIndex(b => b.id === blog.id);
-    // Create copy of blogs
-    let newBlogs = [...blogs];
-    // 1 up for likes
-    const newLikes = blogs[idx].likes + 1;
-    // Update copy of blogs
-    newBlogs[idx] = { ...blogs[idx], likes: newLikes };
-    // Set the updated as the state
-    await blogsService.like(newBlogs[idx].id, newBlogs[idx]);
-    // Sort by likes
-    newBlogs.sort((a, b) => b.likes - a.likes);
-    setBlogs(newBlogs);
+    const idx = props.reduxBlogs.findIndex(b => b.id === blog.id);
+    const blogToLike = props.reduxBlogs[idx];
+    props.like(blogToLike);
   };
 
   const renderBlogs = () => {
+    const sortedBlogs = props.reduxBlogs.sort((a, b) => b.likes - a.likes);
     return (
       <div className="Blogs">
-        {blogs.map(blog => (
+        {sortedBlogs.map(blog => (
           <Blog
             key={blog.id}
             blog={blog}
@@ -214,10 +180,19 @@ const App = props => {
 
 const mapStateToProps = state => {
   // log state for debugging
-  console.log(state);
+  console.log("### REDUX STATE :");
+  console.log(state.blogs);
+  // console.log(state.notification);
   return {
-    notification: state.notification
+    notification: state.notification,
+    reduxBlogs: state.blogs
   };
 };
 
-export default connect(mapStateToProps, { setNotification })(App);
+export default connect(mapStateToProps, {
+  setNotification,
+  initializeBlogs,
+  like,
+  createBlog,
+  removeBlog
+})(App);
