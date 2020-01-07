@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import loginService from "./services/login";
-import blogsService from "./services/blogs";
 import LoginForm from "./components/LoginForm";
 import Blog from "./components/Blog";
 import NewBlogForm from "./components/NewBlogForm";
@@ -16,7 +14,15 @@ import {
   removeBlog
 } from "./reducers/blogReducer";
 
+import { login, logout, initializeUser } from "./reducers/userReducer";
+
 const App = props => {
+  // Store user to redux store
+  const initUser = props.initializeUser;
+  useEffect(() => {
+    initUser();
+  }, [initUser]);
+
   // Store blogs to Redux Store
   const initBlogs = props.initializeBlogs;
   useEffect(() => {
@@ -24,7 +30,6 @@ const App = props => {
     setIsLoading(false);
   }, [initBlogs]);
 
-  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [visibilityNewBlogForm, setVisibilityNewBlogForm] = useState(false);
   // Custom Hooks:
@@ -36,16 +41,10 @@ const App = props => {
 
   const handleLogin = async event => {
     event.preventDefault();
+    resetPassword();
+    resetUsername();
     try {
-      const user = await loginService.login({
-        username: username.value,
-        password: password.value
-      });
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      setUser(user);
-      blogsService.setToken(user.token);
-      resetUsername();
-      resetPassword();
+      props.login(username.value, password.value);
     } catch (exception) {
       props.setNotification({
         type: "error",
@@ -53,11 +52,6 @@ const App = props => {
         timeoutSeconds: 5
       });
     }
-  };
-
-  const handleLogout = () => {
-    window.localStorage.removeItem("loggedBlogappUser");
-    setUser(null);
   };
 
   const toggleVisibilityChange = () =>
@@ -77,7 +71,7 @@ const App = props => {
         author: author.value,
         url: url.value
       },
-      user.token
+      props.reduxUser.token
     );
 
     props.setNotification({
@@ -99,15 +93,6 @@ const App = props => {
       timeoutSeconds: 5
     });
   };
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogsService.setToken(user.token);
-    }
-  }, []);
 
   const handLikeChange = async blog => {
     // Find Element Index in blogs array (state) by given id
@@ -135,7 +120,7 @@ const App = props => {
   return (
     <div className="App">
       <Notification />
-      {user === null ? (
+      {props.reduxUser === null ? (
         <LoginForm
           handleLogin={handleLogin}
           username={username}
@@ -146,8 +131,8 @@ const App = props => {
           <h2>Blogs</h2>
           <div>
             <p>
-              {user.name} logged in{" "}
-              <button onClick={handleLogout}>logout</button>
+              {props.reduxUser.name} logged in{" "}
+              <button onClick={() => props.logout()}>logout</button>
             </p>
           </div>
           {visibilityNewBlogForm ? (
@@ -181,11 +166,12 @@ const App = props => {
 const mapStateToProps = state => {
   // log state for debugging
   console.log("### REDUX STATE :");
-  console.log(state.blogs);
+  console.log(state);
   // console.log(state.notification);
   return {
     notification: state.notification,
-    reduxBlogs: state.blogs
+    reduxBlogs: state.blogs,
+    reduxUser: state.user
   };
 };
 
@@ -194,5 +180,8 @@ export default connect(mapStateToProps, {
   initializeBlogs,
   like,
   createBlog,
-  removeBlog
+  removeBlog,
+  login,
+  logout,
+  initializeUser
 })(App);
