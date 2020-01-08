@@ -9,7 +9,6 @@ import {
   createBlog,
   removeBlog
 } from "../reducers/blogReducer";
-import { logout } from "../reducers/userReducer";
 import { setNotification } from "../reducers/notificationReducer";
 
 const BlogList = props => {
@@ -93,12 +92,6 @@ const BlogList = props => {
     <div className="BlogList">
       <div>
         <h2>Blogs</h2>
-        <div>
-          <p>
-            {props.reduxUser.name} logged in{" "}
-            <button onClick={() => props.logout()}>logout</button>
-          </p>
-        </div>
         {visibilityNewBlogForm ? (
           <div>
             <NewBlogForm
@@ -139,6 +132,5 @@ export default connect(mapStateToProps, {
   initializeBlogs,
   like,
   createBlog,
-  removeBlog,
-  logout,
+  removeBlog
 })(BlogList);

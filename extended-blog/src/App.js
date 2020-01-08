@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
 
-// TODO REDUX
 import { connect } from "react-redux";
 import Notification from "./components/Notification";
 import { initializeUser } from "./reducers/userReducer";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
+import Users from "./components/Users";
+
+// REACT ROUTER
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import LogOut from "./components/LogOut";
 
 const App = props => {
   // Store user to redux store
@@ -17,7 +21,15 @@ const App = props => {
   return (
     <div className="App">
       <Notification />
-      {props.reduxUser === null ? <LoginForm /> : <BlogList />}
+      <LogOut />
+      {props.reduxUser == null ? (
+        <LoginForm />
+      ) : (
+        <Router>
+          <Route exact path="/" render={() => <BlogList />} />
+          <Route exact path="/users" render={() => <Users />} />
+        </Router>
+      )}
     </div>
   );
 };
