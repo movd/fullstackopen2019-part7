@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from "react";
-import LoginForm from "./components/LoginForm";
-import Blog from "./components/Blog";
-import NewBlogForm from "./components/NewBlogForm";
+import React, { useEffect } from "react";
+
 // TODO REDUX
 import { connect } from "react-redux";
 import Notification from "./components/Notification";
-import { useField } from "./hooks";
-import { setNotification } from "./reducers/notificationReducer";
-import {
-  initializeBlogs,
-  like,
-  createBlog,
-  removeBlog
-} from "./reducers/blogReducer";
-
-import { logout, initializeUser } from "./reducers/userReducer";
+import { initializeUser } from "./reducers/userReducer";
+import BlogList from "./components/BlogList";
+import LoginForm from "./components/LoginForm";
 
 const App = props => {
   // Store user to redux store
@@ -23,121 +14,10 @@ const App = props => {
     initUser();
   }, [initUser]);
 
-  // Store blogs to Redux Store
-  const initBlogs = props.initializeBlogs;
-  useEffect(() => {
-    initBlogs();
-    setIsLoading(false);
-  }, [initBlogs]);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [visibilityNewBlogForm, setVisibilityNewBlogForm] = useState(false);
-  // Custom Hooks:
-  const [title, resetTitle] = useField("text");
-  const [author, resetAuthor] = useField("text");
-  const [url, resetUrl] = useField("text");
-
-  const toggleVisibilityChange = () =>
-    setVisibilityNewBlogForm(!visibilityNewBlogForm);
-
-  const handleNewBlog = async event => {
-    event.preventDefault();
-    const newBlog = {
-      title: title.value,
-      author: author.value,
-      url: url.value
-    };
-
-    props.createBlog(
-      {
-        title: title.value,
-        author: author.value,
-        url: url.value
-      },
-      props.reduxUser.token
-    );
-
-    props.setNotification({
-      type: "success",
-      message: `A new Blog ${newBlog.title} by ${newBlog.author} added`,
-      timeoutSeconds: 5
-    });
-    resetAuthor();
-    resetTitle();
-    resetUrl();
-  };
-
-  const handleDeleteBlog = async blog => {
-    props.removeBlog(blog);
-    window.confirm(`remove blog '${blog.title} by ${blog.author}`);
-    props.setNotification({
-      type: "success",
-      message: `The Blog ${blog.title} by ${blog.author} has been deleted`,
-      timeoutSeconds: 5
-    });
-  };
-
-  const handLikeChange = async blog => {
-    // Find Element Index in blogs array (state) by given id
-    const idx = props.reduxBlogs.findIndex(b => b.id === blog.id);
-    const blogToLike = props.reduxBlogs[idx];
-    props.like(blogToLike);
-  };
-
-  const renderBlogs = () => {
-    const sortedBlogs = props.reduxBlogs.sort((a, b) => b.likes - a.likes);
-    return (
-      <div className="Blogs">
-        {sortedBlogs.map(blog => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handLikeChange={() => handLikeChange(blog)}
-            handleDeleteBlog={() => handleDeleteBlog(blog)}
-          />
-        ))}
-      </div>
-    );
-  };
-
   return (
     <div className="App">
       <Notification />
-      {props.reduxUser === null ? (
-        <LoginForm />
-      ) : (
-        <div>
-          <h2>Blogs</h2>
-          <div>
-            <p>
-              {props.reduxUser.name} logged in{" "}
-              <button onClick={() => props.logout()}>logout</button>
-            </p>
-          </div>
-          {visibilityNewBlogForm ? (
-            <div>
-              <NewBlogForm
-                handleNewBlog={handleNewBlog}
-                title={title}
-                author={author}
-                url={url}
-              />
-              <p>
-                <button onClick={toggleVisibilityChange}>cancel</button>
-              </p>
-            </div>
-          ) : (
-            <p>
-              <button onClick={toggleVisibilityChange}>new blog</button>
-            </p>
-          )}
-          {isLoading === true ? (
-            <div>Loading...</div>
-          ) : (
-            <div>{renderBlogs()}</div>
-          )}
-        </div>
-      )}
+      {props.reduxUser === null ? <LoginForm /> : <BlogList />}
     </div>
   );
 };
@@ -146,20 +26,9 @@ const mapStateToProps = state => {
   // log state for debugging
   console.log("### REDUX STATE :");
   console.log(state);
-  // console.log(state.notification);
   return {
-    notification: state.notification,
-    reduxBlogs: state.blogs,
     reduxUser: state.user
   };
 };
 
-export default connect(mapStateToProps, {
-  setNotification,
-  initializeBlogs,
-  like,
-  createBlog,
-  removeBlog,
-  logout,
-  initializeUser
-})(App);
+export default connect(mapStateToProps, { initializeUser })(App);
