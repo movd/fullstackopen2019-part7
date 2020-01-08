@@ -14,7 +14,7 @@ import {
   removeBlog
 } from "./reducers/blogReducer";
 
-import { login, logout, initializeUser } from "./reducers/userReducer";
+import { logout, initializeUser } from "./reducers/userReducer";
 
 const App = props => {
   // Store user to redux store
@@ -33,26 +33,9 @@ const App = props => {
   const [isLoading, setIsLoading] = useState(true);
   const [visibilityNewBlogForm, setVisibilityNewBlogForm] = useState(false);
   // Custom Hooks:
-  const [username, resetUsername] = useField("text");
-  const [password, resetPassword] = useField("password");
   const [title, resetTitle] = useField("text");
   const [author, resetAuthor] = useField("text");
   const [url, resetUrl] = useField("text");
-
-  const handleLogin = async event => {
-    event.preventDefault();
-    resetPassword();
-    resetUsername();
-    try {
-      props.login(username.value, password.value);
-    } catch (exception) {
-      props.setNotification({
-        type: "error",
-        message: "wrong username or password",
-        timeoutSeconds: 5
-      });
-    }
-  };
 
   const toggleVisibilityChange = () =>
     setVisibilityNewBlogForm(!visibilityNewBlogForm);
@@ -121,11 +104,7 @@ const App = props => {
     <div className="App">
       <Notification />
       {props.reduxUser === null ? (
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          password={password}
-        />
+        <LoginForm />
       ) : (
         <div>
           <h2>Blogs</h2>
@@ -181,7 +160,6 @@ export default connect(mapStateToProps, {
   like,
   createBlog,
   removeBlog,
-  login,
   logout,
   initializeUser
 })(App);
