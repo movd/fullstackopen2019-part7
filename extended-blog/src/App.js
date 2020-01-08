@@ -6,6 +6,7 @@ import { initializeUser } from "./reducers/userReducer";
 import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import Users from "./components/Users";
+import SingleUser from "./components/SingleUser";
 
 // REACT ROUTER
 import { BrowserRouter as Router, Route } from "react-router-dom";
@@ -28,6 +29,11 @@ const App = props => {
         <Router>
           <Route exact path="/" render={() => <BlogList />} />
           <Route exact path="/users" render={() => <Users />} />
+          <Route
+            exact
+            path="/users/:id"
+            render={({ match }) => <SingleUser id={match.params.id} />}
+          />
         </Router>
       )}
     </div>
@@ -38,6 +44,7 @@ const mapStateToProps = state => {
   // log state for debugging
   console.log("### REDUX STATE :");
   console.log(state);
+
   return {
     reduxUser: state.user
   };
