@@ -7,10 +7,13 @@ import BlogList from "./components/BlogList";
 import LoginForm from "./components/LoginForm";
 import Users from "./components/Users";
 import SingleUser from "./components/SingleUser";
+import SingleBlog from "./components/SingleBlog";
 
 // REACT ROUTER
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, withRouter } from "react-router-dom";
 import LogOut from "./components/LogOut";
+
+const BlogListWithHistory = withRouter(BlogList);
 
 const App = props => {
   // Store user to redux store
@@ -27,7 +30,14 @@ const App = props => {
         <LoginForm />
       ) : (
         <Router>
-          <Route exact path="/" render={() => <BlogList />} />
+          <Route exact path="/" render={() => <BlogListWithHistory />} />
+          <Route exact path="/blogs" render={() => <BlogListWithHistory />} />
+
+          <Route
+            exact
+            path="/blogs/:id"
+            render={({ match }) => <SingleBlog id={match.params.id} />}
+          />
           <Route exact path="/users" render={() => <Users />} />
           <Route
             exact

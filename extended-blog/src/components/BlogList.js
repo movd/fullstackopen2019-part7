@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import Blog from "./Blog";
+import { Link } from "react-router-dom";
 import NewBlogForm from "./NewBlogForm";
 import { useField } from "../hooks";
 import {
@@ -12,10 +12,11 @@ import {
 import { setNotification } from "../reducers/notificationReducer";
 
 const BlogList = props => {
-  // Store blogs to Redux Store
   const initBlogs = props.initializeBlogs;
+
   useEffect(() => {
     initBlogs();
+
     setIsLoading(false);
   }, [initBlogs]);
 
@@ -66,24 +67,21 @@ const BlogList = props => {
     });
   };
 
-  const handLikeChange = async blog => {
-    // Find Element Index in blogs array (state) by given id
-    const idx = props.reduxBlogs.findIndex(b => b.id === blog.id);
-    const blogToLike = props.reduxBlogs[idx];
-    props.like(blogToLike);
-  };
-
   const renderBlogs = () => {
     const sortedBlogs = props.reduxBlogs.sort((a, b) => b.likes - a.likes);
     return (
       <div className="Blogs">
         {sortedBlogs.map(blog => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handLikeChange={() => handLikeChange(blog)}
-            handleDeleteBlog={() => handleDeleteBlog(blog)}
-          />
+          // <Blog
+          //   key={blog.id}
+          //   blog={blog}
+          //   handLikeChange={() => handLikeChange(blog)}
+          //   handleDeleteBlog={() => handleDeleteBlog(blog)}
+          // />
+
+          <p key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> by {blog.author}
+          </p>
         ))}
       </div>
     );
