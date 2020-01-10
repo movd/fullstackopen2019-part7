@@ -13,6 +13,10 @@ const Blog = ({ blog, handLikeChange, handleDeleteBlog }) => {
       handleDeleteBlog ? (
         <Button onClick={handleDeleteBlog}>remove</Button>
       ) : null}
+      <h3>Comments</h3>
+      {blog.comments.map(c => (
+        <p>{c.comment}</p>
+      ))}
     </div>
   );
 
