@@ -16,10 +16,9 @@
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "webpack-start": "webpack-dev-server --mode=development",
-    "webpack-build": "webpack --mode=production",
+    "start": "webpack-dev-server --mode=development",
+    "build": "webpack --mode=production",
+    "cypress:open": "cypress open",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "eslint": "eslint ."

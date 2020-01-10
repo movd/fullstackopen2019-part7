@@ -19,7 +19,9 @@ const NewBlogForm = ({ handleNewBlog, title, author, url }) => {
           url:
           <input {...url} name="Url" />
         </div>
-        <Button type="submit">create</Button>
+        <Button type="submit" id="create">
+          create
+        </Button>
       </form>
     </div>
   );
