@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { initializeUsers } from "../reducers/usersReducers";
 import { Link } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
+
 const Users = props => {
   const initUsers = props.initializeUsers;
   useEffect(() => {
@@ -10,8 +12,15 @@ const Users = props => {
 
   return (
     <div className="Users">
-      <h1>blogs</h1>
-      <h2>Users</h2>
+      <Typography
+        component="h1"
+        variant="h2"
+        align="left"
+        color="textPrimary"
+        gutterBottom
+      >
+        users
+      </Typography>
       <table>
         <thead>
           <tr>

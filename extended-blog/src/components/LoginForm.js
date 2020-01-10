@@ -2,7 +2,7 @@ import React from "react";
 import { login } from "../reducers/userReducer";
 import { connect } from "react-redux";
 import { useField } from "../hooks";
-
+import Button from "@material-ui/core/Button";
 const LoginForm = props => {
   const [username, resetUsername] = useField("text");
   const [password, resetPassword] = useField("password");
@@ -34,7 +34,7 @@ const LoginForm = props => {
           password
           <input {...password} autoComplete="on" />
         </div>
-        <button type="submit">login</button>
+        <Button type="submit">login</Button>
       </form>
     </div>
   );

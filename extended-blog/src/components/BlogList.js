@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import NewBlogForm from "./NewBlogForm";
+import Button from "@material-ui/core/Button";
 import { useField } from "../hooks";
 import {
   initializeBlogs,
@@ -10,6 +11,7 @@ import {
   removeBlog
 } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
+import Typography from "@material-ui/core/Typography";
 
 const BlogList = props => {
   const initBlogs = props.initializeBlogs;
@@ -89,7 +91,15 @@ const BlogList = props => {
   return (
     <div className="BlogList">
       <div>
-        <h2>Blogs</h2>
+        <Typography
+          component="h1"
+          variant="h2"
+          align="left"
+          color="textPrimary"
+          gutterBottom
+        >
+          blogs
+        </Typography>
         {visibilityNewBlogForm ? (
           <div>
             <NewBlogForm
@@ -99,12 +109,12 @@ const BlogList = props => {
               url={url}
             />
             <p>
-              <button onClick={toggleVisibilityChange}>cancel</button>
+              <Button onClick={toggleVisibilityChange}>cancel</Button>
             </p>
           </div>
         ) : (
           <p>
-            <button onClick={toggleVisibilityChange}>new blog</button>
+            <Button onClick={toggleVisibilityChange}>new blog</Button>
           </p>
         )}
         {isLoading === true ? (

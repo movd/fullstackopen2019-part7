@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Button from "@material-ui/core/Button";
 
 const NewBlogForm = ({ handleNewBlog, title, author, url }) => {
   return (
@@ -18,7 +19,7 @@ const NewBlogForm = ({ handleNewBlog, title, author, url }) => {
           url:
           <input {...url} name="Url" />
         </div>
-        <button type="submit">create</button>
+        <Button type="submit">create</Button>
       </form>
     </div>
   );

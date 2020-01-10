@@ -8,7 +8,8 @@ import LoginForm from "./components/LoginForm";
 import Users from "./components/Users";
 import SingleUser from "./components/SingleUser";
 import SingleBlog from "./components/SingleBlog";
-
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
 // REACT ROUTER
 import { BrowserRouter as Router, Route, withRouter } from "react-router-dom";
 import NavBar from "./components/NavBar";
@@ -23,30 +24,38 @@ const App = props => {
   }, [initUser]);
 
   return (
-    <div className="App">
-      {props.reduxUser == null ? (
-        <LoginForm />
-      ) : (
-        <Router>
-          <Notification />
-          <NavBar />
-          <Route exact path="/" render={() => <BlogListWithHistory />} />
-          <Route exact path="/blogs" render={() => <BlogListWithHistory />} />
+    <Typography variant="body2">
+      <div className="App">
+        {props.reduxUser == null ? (
+          <LoginForm />
+        ) : (
+          <Router>
+            <NavBar />
+            <Container maxWidth="sm" component="main">
+              <Notification />
+              <Route exact path="/" render={() => <BlogListWithHistory />} />
+              <Route
+                exact
+                path="/blogs"
+                render={() => <BlogListWithHistory />}
+              />
 
-          <Route
-            exact
-            path="/blogs/:id"
-            render={({ match }) => <SingleBlog id={match.params.id} />}
-          />
-          <Route exact path="/users" render={() => <Users />} />
-          <Route
-            exact
-            path="/users/:id"
-            render={({ match }) => <SingleUser id={match.params.id} />}
-          />
-        </Router>
-      )}
-    </div>
+              <Route
+                exact
+                path="/blogs/:id"
+                render={({ match }) => <SingleBlog id={match.params.id} />}
+              />
+              <Route exact path="/users" render={() => <Users />} />
+              <Route
+                exact
+                path="/users/:id"
+                render={({ match }) => <SingleUser id={match.params.id} />}
+              />
+            </Container>
+          </Router>
+        )}
+      </div>
+    </Typography>
   );
 };
 

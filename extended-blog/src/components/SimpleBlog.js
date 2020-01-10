@@ -8,7 +8,7 @@ const SimpleBlog = ({ blog, onClick }) => (
     </div>
     <div>
       blog has <span className="likes">{blog.likes}</span> likes
-      <button onClick={onClick}>like</button>
+      <Button onClick={onClick}>like</Button>
     </div>
   </div>
 );

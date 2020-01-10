@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from "react";
-import "./Blog.css";
-
+import React from "react";
+import Button from "@material-ui/core/Button";
 const Blog = ({ blog, handLikeChange, handleDeleteBlog }) => {
-
-
   const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
 
   const blogDetails = (
     <div className="blog-details">
       <div>
-        {blog.likes} likes <button onClick={handLikeChange}>like</button>
+        {blog.likes} likes <Button onClick={handLikeChange}>like</Button>
       </div>
       <div>added by {blog.user[0].name}</div>
       {JSON.parse(loggedUserJSON).username === blog.user[0].username &&
       handleDeleteBlog ? (
-        <button onClick={handleDeleteBlog}>remove</button>
+        <Button onClick={handleDeleteBlog}>remove</Button>
       ) : null}
     </div>
   );
