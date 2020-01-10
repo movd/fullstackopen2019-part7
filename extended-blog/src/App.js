@@ -11,7 +11,7 @@ import SingleBlog from "./components/SingleBlog";
 
 // REACT ROUTER
 import { BrowserRouter as Router, Route, withRouter } from "react-router-dom";
-import LogOut from "./components/LogOut";
+import NavBar from "./components/NavBar";
 
 const BlogListWithHistory = withRouter(BlogList);
 
@@ -24,12 +24,12 @@ const App = props => {
 
   return (
     <div className="App">
-      <Notification />
-      <LogOut />
       {props.reduxUser == null ? (
         <LoginForm />
       ) : (
         <Router>
+          <Notification />
+          <NavBar />
           <Route exact path="/" render={() => <BlogListWithHistory />} />
           <Route exact path="/blogs" render={() => <BlogListWithHistory />} />
 
