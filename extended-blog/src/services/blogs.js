@@ -20,6 +20,11 @@ const create = async blogObject => {
   return res.data;
 };
 
+const createComment = async (id, commentObject) => {
+  const res = await axios.post(`${baseUrl}/${id}/comments`, commentObject);
+  return res.data;
+};
+
 const like = async (id, updateBlog) => {
   const res = await axios.put(`${baseUrl}/${id}`, updateBlog);
   return res.data;
@@ -31,4 +36,4 @@ const remove = async blogObject => {
   return res.data;
 };
 
-export default { getAll, setToken, like, create, remove };
+export default { getAll, setToken, like, create, remove, createComment };

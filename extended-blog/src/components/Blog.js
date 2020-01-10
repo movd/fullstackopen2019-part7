@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
+import NewCommentForm from "./NewCommentForm";
 const Blog = ({ blog, handLikeChange, handleDeleteBlog }) => {
   const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
 
@@ -17,6 +18,7 @@ const Blog = ({ blog, handLikeChange, handleDeleteBlog }) => {
       {blog.comments.map(c => (
         <p>{c.comment}</p>
       ))}
+      <NewCommentForm blogId={blog.id} />
     </div>
   );
 

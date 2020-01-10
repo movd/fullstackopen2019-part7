@@ -9,6 +9,7 @@ const config = {
   },
   devServer: {
     contentBase: path.resolve(__dirname, "build"),
+    historyApiFallback: true,
     compress: true,
     port: 3000
   },
