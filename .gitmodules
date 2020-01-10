@@ -1,0 +1,3 @@
+[submodule "extended-blog/backend"]
+	path = extended-blog/backend
+	url = git@github.com:movd/fullstackopen2019-part4.git
