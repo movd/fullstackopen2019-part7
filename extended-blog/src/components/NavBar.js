@@ -6,6 +6,7 @@ import Button from "@material-ui/core/Button";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Link from "@material-ui/core/Link";
+import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 import "./NavBar.css";
@@ -35,6 +36,21 @@ const NavBar = props => {
       className={classes.appBar}
     >
       <Toolbar className={classes.toolbar}>
+        <Typography
+          variant="h6"
+          color="inherit"
+          noWrap
+          className={classes.toolbarTitle}
+        >
+          <Link
+            color="textPrimary"
+            component={RouterLink}
+            to="/"
+            className={classes.link}
+          >
+            blog app
+          </Link>
+        </Typography>
         <nav>
           <Link
             variant="button"
