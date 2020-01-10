@@ -59,15 +59,15 @@ const BlogList = props => {
     resetUrl();
   };
 
-  const handleDeleteBlog = async blog => {
-    props.removeBlog(blog);
-    window.confirm(`remove blog '${blog.title} by ${blog.author}`);
-    props.setNotification({
-      type: "success",
-      message: `The Blog ${blog.title} by ${blog.author} has been deleted`,
-      timeoutSeconds: 5
-    });
-  };
+  // const handleDeleteBlog = async blog => {
+  //   props.removeBlog(blog);
+  //   window.confirm(`remove blog '${blog.title} by ${blog.author}`);
+  //   props.setNotification({
+  //     type: "success",
+  //     message: `The Blog ${blog.title} by ${blog.author} has been deleted`,
+  //     timeoutSeconds: 5
+  //   });
+  // };
 
   const renderBlogs = () => {
     const sortedBlogs = props.reduxBlogs.sort((a, b) => b.likes - a.likes);

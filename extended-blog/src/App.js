@@ -26,7 +26,7 @@ const App = props => {
   return (
     <Typography variant="body2">
       <div className="App">
-        {props.reduxUser == null ? (
+        {props.reduxUser === null ? (
           <LoginForm />
         ) : (
           <Router>
